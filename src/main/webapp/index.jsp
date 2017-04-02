@@ -1,10 +1,15 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="bullsandcows.model.User" %>
 <%@ page import="bullsandcows.controller.GameController" %>
 <%@ page import="bullsandcows.model.GameInfo" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="bullsandcows.model.GameStatus" %>
 <%@ page contentType="text/html;charset=utf-8" %>
+<%
+    if(session.getAttribute("user")==null){
+            response.sendRedirect("/login.jsp");
+            return;
+    }
+%>
 <html>
 <head>
     <!--Import Google Icon Font-->
@@ -62,7 +67,6 @@
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Bulls And Cows</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="registration.jsp">Регистрация</a></li>
         </ul>
     </div>
 </nav>
@@ -75,7 +79,7 @@
                     GameInfo gameInfo = (GameInfo) session.getAttribute("game");
                     GameController gameController;
                     if(gameInfo == null) {
-                        User user = new User("Leonid", "123");
+                        User user = (User) session.getAttribute("user");
                         gameController = new GameController(user);
                     }else {
                         gameController = new GameController(gameInfo);

@@ -5,6 +5,7 @@ import bullsandcows.model.GameStatus;
 import bullsandcows.model.User;
 import lombok.Getter;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -14,14 +15,17 @@ import java.util.Scanner;
  */
 
 public class GameController {
+    private UserDAO userDAO;
     @Getter
     private GameInfo gameInfo;
 
     public GameController(User user) {
         this.gameInfo = new GameInfo(user, generateNumber());
+
     }
     public GameController(GameInfo gameInfo){
         this.gameInfo = gameInfo;
+
     }
     private int generateNumber(){
         Random random = new Random();
@@ -29,6 +33,7 @@ public class GameController {
         do {
             temp = random.nextInt(9000)+1000;
         }while (!checkNumber(temp));
+        System.out.println(temp);
         return temp;
     }
     private boolean checkNumber(int number){
@@ -56,6 +61,22 @@ public class GameController {
         if (ans[0]==4){
             gameInfo.setGameStatus(GameStatus.ENDED);
             gameInfo.getUser().updateRating(gameInfo.getAttemptCount());
+            try {
+                userDAO = new UserDAO();
+                userDAO.saveUser(gameInfo.getUser());
+            } catch (SQLException e) {
+                    e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    userDAO.closeDB();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return ans;
     }
@@ -76,7 +97,7 @@ public class GameController {
         return ans;
     }
     public static void main(String[] args) {
-        User user = new User("Leonid","12345");
+        User user = new User("Leonid","12345",0);
         GameController gameController = new GameController(user);
         Scanner sc = new Scanner(System.in);
         int[] gameAns;

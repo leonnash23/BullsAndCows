@@ -1,6 +1,7 @@
 package bullsandcows.model;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -9,10 +10,11 @@ import lombok.Setter;
  */
 @RequiredArgsConstructor
 public class User {
-    
-    private final String login;
-    private final String password;
     @Getter
+    private final String login;
+    @Getter
+    private final String password;
+    @Getter @NonNull
     private double rating;
 
     public double updateRating(int newRating){

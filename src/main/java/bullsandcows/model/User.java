@@ -18,7 +18,11 @@ public class User {
     private double rating;
 
     public double updateRating(int newRating){
-        rating = (rating+newRating)/2;
+        if(rating == 0.0){
+            rating = newRating;
+        } else {
+            rating = (rating + newRating) / 2;
+        }
         return rating;
     }
 }

@@ -41,11 +41,19 @@ public class UserDAO {
         if(isUserExist(user)){
             statement.execute("UPDATE users SET rating = "+user.getRating()
                     +" WHERE login = '"+user.getLogin()+"' and password = '"+user.getPassword()+"'");
-        } else {
-            statement.execute("INSERT INTO 'users' ('login', 'password', 'rating') " +
-                    "VALUES ('"+user.getLogin()+"','"+user.getPassword()+"',"+user.getRating()+");");
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    public boolean saveNewUser(User user) throws SQLException {
+      if(isUserExist(user)){
+          return false;
+      } else {
+          statement.execute("INSERT INTO 'users' ('login', 'password', 'rating') " +
+                  "VALUES ('"+user.getLogin()+"','"+user.getPassword()+"',"+user.getRating()+");");
+          return true;
+      }
     }
 
     private boolean isUserExist(User user) throws SQLException {
@@ -65,9 +73,9 @@ public class UserDAO {
         }
     }
 
-    public User[] getAlluser() throws SQLException {
+    public User[] getTopUsers() throws SQLException {
         ArrayList<User> users = new ArrayList<User>();
-        resultSet = statement.executeQuery("SELECT * FROM users");
+        resultSet = statement.executeQuery("SELECT * FROM users WHERE rating <> 0.0 ORDER BY rating");
         while (resultSet.next()){
             users.add(new User(resultSet.getString("login"),
                     resultSet.getString("password"),

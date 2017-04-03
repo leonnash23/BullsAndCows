@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="bullsandcows.model.User" %>
 <%@ page import="bullsandcows.controller.UserDAO" %>
 <%@ page import="java.sql.SQLException" %>
@@ -19,9 +20,17 @@
             e.printStackTrace();
         }
     }
+    if(login && user !=null){
+    session.setAttribute("user",user);
+    response.sendRedirect("/");
+    }
+
+    pageContext.setAttribute("login",login);
+    pageContext.setAttribute("user",user!=null);
 %>
 <html>
 <head>
+    <title>Вход</title>
     <!--Import Google Icon Font-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
@@ -35,39 +44,31 @@
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Bulls And Cows</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="top.jsp">Рейтинг</a></li>
             <li><a href="registration.jsp">Регистрация</a></li>
         </ul>
     </div>
 </nav>
 <div class="container">
     <div class="row">
-        <%
-            if(!login || user == null){
-                if(login){
-        %>
-        <p class="flow-text">Неверный логин или пароль</p>
-        <%
-            }
-        %>
-        <form class="col s12 offset-l4" action="login.jsp">
-            <div class="row">
-                <div class="input-field col s4">
-                    <input type="text" placeholder="Логин"  name="login"  required="required">
+        <c:if test="${login && !user}">
+            <p class="flow-text">Неверный логин или пароль</p>
+        </c:if>
+        <c:if test="${!login || !user}">
+            <form class="col s12 offset-l4" action="login.jsp">
+                <div class="row">
+                    <div class="input-field col s4">
+                        <input type="text" placeholder="Логин"  name="login"  required="required">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s4">
-                    <input type="password" placeholder="Пароль"  name="password"  required="required">
+                <div class="row">
+                    <div class="input-field col s4">
+                        <input type="password" placeholder="Пароль"  name="password"  required="required">
+                    </div>
                 </div>
-            </div>
-            <button class="btn waves-effect waves-light" type="submit" >Войти</button>
-        </form>
-        <%
-            }  else {
-                session.setAttribute("user",user);
-                response.sendRedirect("/");
-            }
-        %>
+                <button class="btn waves-effect waves-light" type="submit" >Войти</button>
+            </form>
+        </c:if>
     </div>
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

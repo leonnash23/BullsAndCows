@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="bullsandcows.model.User" %>
 <%@ page import="bullsandcows.controller.GameController" %>
 <%@ page import="bullsandcows.model.GameInfo" %>
@@ -9,9 +10,35 @@
             response.sendRedirect("/login.jsp");
             return;
     }
+    GameInfo gameInfo = (GameInfo) session.getAttribute("game");
+    GameController gameController;
+    if(gameInfo == null) {
+        User user = (User) session.getAttribute("user");
+        gameController = new GameController(user);
+    }else {
+        gameController = new GameController(gameInfo);
+    }
+    if(request.getParameter("number") != null){
+        gameController.doAttempt(Integer.parseInt(request.getParameter("number")));
+    }
+    if (request.getParameter("action") != null && request.getParameter("action").equals("newGame")){
+        gameController.newGame();
+    }
+    int[] bc;
+    ArrayList<Integer> attempts = gameController.getGameInfo().getAttempts();
+    Integer[][] attemptsAr = new Integer[attempts.size()][3];
+    for(int i=0;i<attempts.size();i++){
+        attemptsAr[i][0] = attempts.get(i);
+        int[] temp = gameController.getBullsAndCows(attempts.get(i));
+        attemptsAr[i][1] = temp[0];
+        attemptsAr[i][2] = temp[1];
+    }
+    pageContext.setAttribute("attempts", attemptsAr);
+    session.setAttribute("game",gameController.getGameInfo());
 %>
 <html>
 <head>
+    <title>Быки и Коровы</title>
     <!--Import Google Icon Font-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
@@ -22,15 +49,19 @@
     <script>
         function writeNumber(n) {
             var hiddenStr = document.getElementById("number");
-            if(hiddenStr.getAttribute("value") === "Введите число"){
-                hiddenStr.setAttribute("value","")
-            }
-            hiddenStr.setAttribute('value', String(hiddenStr.value)+String(n));
             var viewStr = document.getElementById("viewNumber");
+
+
+            hiddenStr.setAttribute('value', String(hiddenStr.value)+String(n));
             viewStr.innerHTML = hiddenStr.getAttribute("value");
+            if(hiddenStr.getAttribute("value").length>0
+                && hiddenStr.getAttribute("value").indexOf('0') === -1){
+                show(document.getElementById('0'));
+            }
             if(hiddenStr.getAttribute("value").length===4){
                 hide(document.getElementById("numberKeyboard"))
             }
+
         }
         function hide(el) {
             el.style.display = 'none'
@@ -40,16 +71,22 @@
         }
         function del() {
             var hiddenStr = document.getElementById("number");
+            var viewStr = document.getElementById("viewNumber");
+
             var val = hiddenStr.getAttribute("value");
-            if(val.length !== 0) {
+            if(val.length !== 0){
                 var last = val[val.length - 1];
-                hiddenStr.setAttribute("value", val.slice(0, -1));
-                var viewStr = document.getElementById("viewNumber");
+                val = val.slice(0, -1)
+                hiddenStr.setAttribute("value", val);
                 viewStr.innerHTML = hiddenStr.getAttribute("value");
                 if (hiddenStr.getAttribute("value").length < 4) {
                     show(document.getElementById("numberKeyboard"))
                 }
                 show(document.getElementById(last))
+            }
+            if(val.length === 0) {
+                viewStr.innerHTML = "Введите число";
+                hide(document.getElementById('0'));
             }
         }
         function check(el) {
@@ -67,6 +104,8 @@
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Bulls And Cows</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="top.jsp">Рейтинг</a></li>
+            <li><a href="logout.jsp">Выход</a></li>
         </ul>
     </div>
 </nav>
@@ -75,24 +114,7 @@
             <div class="col s12 m4 l2"></div>
             <div class="col s12 m4 l8">
 
-                <%
-                    GameInfo gameInfo = (GameInfo) session.getAttribute("game");
-                    GameController gameController;
-                    if(gameInfo == null) {
-                        User user = (User) session.getAttribute("user");
-                        gameController = new GameController(user);
-                    }else {
-                        gameController = new GameController(gameInfo);
-                    }
-                    if(request.getParameter("number") != null){
-                        gameController.doAttempt(Integer.parseInt(request.getParameter("number")));
-                    }
-                    if (request.getParameter("action") != null && request.getParameter("action").equals("newGame")){
-                        gameController.newGame();
-                    }
-                    int[] bc;
-                    ArrayList<Integer> attempts = gameController.getGameInfo().getAttempts();
-                %>
+
                     <table class="highlight">
                         <thead>
                             <tr>
@@ -101,19 +123,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%
-                                for (int i1 = 0; i1 < attempts.size(); i1++) {
-                                    int i = attempts.get(i1);
-                                    bc = gameController.getBullsAndCows(i);
-                            %>
-                            <tr>
-                                <td><p class="flow-text"><%=i%></p></td>
-                                <td><p class="flow-text"><%=bc[0]%>Б<%=bc[1]%>К</p></td>
-                            </tr>
-                            <%
-                                }
-                                session.setAttribute("game",gameController.getGameInfo());
-                            %>
+                            <c:forEach items="${attempts}" var="a">
+                                <tr>
+                                    <td><p class="flow-text">${a[0]}</p></td>
+                                    <td><p class="flow-text">${a[1]}Б${a[2]}К</p></td>
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
                 <div class="row z-depth-4" style="padding: 10px">
@@ -124,7 +139,7 @@
                         <input id="number" name="number"  hidden type="number" title="Number" value=""/>
                         <h2 id="viewNumber" class="flow-text">Введите число</h2>
                         <div id="numberKeyboard" class="center-align">
-                            <a id='0' class="waves-effect waves-light btn-large" onclick="hide(this); writeNumber(0)">0</a>
+                            <a id='0' class="waves-effect waves-light btn-large" style="display: none" onclick="hide(this); writeNumber(0)">0</a>
                             <a id='1' class="waves-effect waves-light btn-large" onclick="hide(this); writeNumber(1)">1</a>
                             <a id='2' class="waves-effect waves-light btn-large" onclick="hide(this); writeNumber(2)">2</a>
                             <a id='3' class="waves-effect waves-light btn-large" onclick="hide(this); writeNumber(3)">3</a>

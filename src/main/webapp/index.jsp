@@ -7,7 +7,7 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%
     if(session.getAttribute("user")==null){
-            response.sendRedirect("/login.jsp");
+            response.sendRedirect("login.jsp");
             return;
     }
     GameInfo gameInfo = (GameInfo) session.getAttribute("game");

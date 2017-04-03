@@ -22,7 +22,7 @@
     }
     if(login && user !=null){
     session.setAttribute("user",user);
-    response.sendRedirect("/");
+    response.sendRedirect("");
     }
 
     pageContext.setAttribute("login",login);

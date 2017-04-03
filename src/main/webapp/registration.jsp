@@ -5,7 +5,7 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%
     if(session.getAttribute("user") != null){
-        response.sendRedirect("/");
+        response.sendRedirect("index.jsp");
         return;
     }
     boolean registation = false;
@@ -54,7 +54,19 @@
         <nav>
             <div class="nav-wrapper">
                 <a href="#" class="brand-logo">Bulls And Cows</a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="top.jsp">Рейтинг</a></li>
+                    <c:choose>
+                        <c:when test="${user}">
+                            <li><a href="index.jsp">Играть</a></li>
+                        </c:when>
+                        <c:when test="${!user}">
+                            <li><a href="login.jsp">Вход</a></li>
+                        </c:when>
+                    </c:choose>
+                </ul>
+                <ul class="side-nav" id="mobile-demo">
                     <li><a href="top.jsp">Рейтинг</a></li>
                     <c:choose>
                         <c:when test="${user}">
@@ -68,33 +80,41 @@
             </div>
         </nav>
         <div class="container">
-            <c:choose>
-                <c:when test="${!reg}">
-                    <div class="row">
-                        <form class="col s12 offset-l4" action="registration.jsp">
-                            <div class="row">
-                                <div class="input-field col s4">
-                                    <input type="text" placeholder="Логин"  name="login"  required="required">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="input-field col s4">
-                                    <input type="password" placeholder="Пароль"  name="password"  required="required">
-                                </div>
-                            </div>
-                            <button class="btn waves-effect waves-light" type="submit" >Зарегистрироваться</button>
-                        </form>
-                    </div>
-                </c:when>
-                <c:when test="${reg && save}">
-                    <h2>Вы успешно зарегистрированы!</h2>
-                </c:when>
-                <c:when test="${reg && !save}">
-                    <h2>Регистрация не прошла. Вероятно пользователь с таким логином уже существует.</h2>
-                </c:when>
-            </c:choose>
+            <div class="row">
+                <div class="col s12 m4 l2"></div>
+                <div class="col s12 m4 l8">
+                    <c:choose>
+                        <c:when test="${!reg}">
+
+                                <form action="registration.jsp">
+                                    <div class="row">
+                                        <div class="input-field col s12 m4 l8">
+                                            <input type="text" placeholder="Логин"  name="login"  required="required">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 m4 l8">
+                                            <input type="password" placeholder="Пароль"  name="password"  required="required">
+                                        </div>
+                                    </div>
+                                    <button class="btn waves-effect waves-light" type="submit" >Зарегистрироваться</button>
+                                </form>
+                        </c:when>
+                        <c:when test="${reg && save}">
+                            <h2>Вы успешно зарегистрированы!</h2>
+                        </c:when>
+                        <c:when test="${reg && !save}">
+                            <h2>Регистрация не прошла. Вероятно пользователь с таким логином уже существует.</h2>
+                        </c:when>
+                    </c:choose>
+                </div>
+                <div class="col s12 m4 l2"></div>
+            </div>
         </div>
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script>
+            $(".button-collapse").sideNav();
+        </script>
     </body>
 </html>

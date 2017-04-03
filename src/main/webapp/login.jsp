@@ -22,7 +22,7 @@
     }
     if(login && user !=null){
     session.setAttribute("user",user);
-    response.sendRedirect("");
+    response.sendRedirect("index.jsp");
     }
 
     pageContext.setAttribute("login",login);
@@ -43,7 +43,12 @@
 <nav>
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Bulls And Cows</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="top.jsp">Рейтинг</a></li>
+            <li><a href="registration.jsp">Регистрация</a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
             <li><a href="top.jsp">Рейтинг</a></li>
             <li><a href="registration.jsp">Регистрация</a></li>
         </ul>
@@ -51,27 +56,34 @@
 </nav>
 <div class="container">
     <div class="row">
-        <c:if test="${login && !user}">
-            <p class="flow-text">Неверный логин или пароль</p>
-        </c:if>
-        <c:if test="${!login || !user}">
-            <form class="col s12 offset-l4" action="login.jsp">
-                <div class="row">
-                    <div class="input-field col s4">
-                        <input type="text" placeholder="Логин"  name="login"  required="required">
+        <div class="col s12 m4 l2"></div>
+        <div class="col s12 m4 l8">
+            <c:if test="${login && !user}">
+                <p class="flow-text">Неверный логин или пароль</p>
+            </c:if>
+            <c:if test="${!login || !user}">
+                <form action="login.jsp">
+                    <div class="row">
+                        <div class="input-field col s12 m4 l8">
+                            <input type="text" placeholder="Логин"  name="login"  required="required">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s4">
-                        <input type="password" placeholder="Пароль"  name="password"  required="required">
+                    <div class="row">
+                        <div class="input-field col s12 m4 l8">
+                            <input type="password" placeholder="Пароль"  name="password"  required="required">
+                        </div>
                     </div>
-                </div>
-                <button class="btn waves-effect waves-light" type="submit" >Войти</button>
-            </form>
-        </c:if>
+                    <button class="btn waves-effect waves-light" type="submit" >Войти</button>
+                </form>
+            </c:if>
+        </div>
+        <div class="col s12 m4 l2"></div>
     </div>
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="js/materialize.min.js"></script>
+<script>
+    $(".button-collapse").sideNav();
+</script>
 </body>
 </html>

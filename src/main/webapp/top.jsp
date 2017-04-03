@@ -34,7 +34,20 @@
     <nav>
         <div class="nav-wrapper">
             <a href="#" class="brand-logo">Bulls And Cows</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <c:choose>
+                    <c:when test="${user}">
+                        <li><a href="index.jsp">Играть</a></li>
+                        <li><a href="logout.jsp">Выход</a></li>
+                    </c:when>
+                    <c:when test="${!user}">
+                        <li><a href="registration.jsp">Регистрация</a></li>
+                        <li><a href="login.jsp">Вход</a></li>
+                    </c:when>
+                </c:choose>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
                 <c:choose>
                     <c:when test="${user}">
                         <li><a href="index.jsp">Играть</a></li>
@@ -81,5 +94,8 @@
     </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script>
+        $(".button-collapse").sideNav();
+    </script>
 </body>
 </html>

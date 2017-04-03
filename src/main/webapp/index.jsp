@@ -103,9 +103,14 @@
 <nav>
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Bulls And Cows</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="top.jsp">Рейтинг</a></li>
             <li><a href="logout.jsp">Выход</a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+                <li><a href="top.jsp">Рейтинг</a></li>
+                <li><a href="logout.jsp">Выход</a></li>
         </ul>
     </div>
 </nav>
@@ -132,7 +137,7 @@
                         </tbody>
                     </table>
                 <div class="row z-depth-4" style="padding: 10px">
-                    <form action="/" method="post" onsubmit="check(this); return false">
+                    <form action="index.jsp" method="post" onsubmit="check(this); return false">
                         <%
                         if(gameController.getGameInfo().getGameStatus() == GameStatus.IN_PROCESS){
                         %>
@@ -165,6 +170,9 @@
                 </div>
                 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
                 <script type="text/javascript" src="js/materialize.min.js"></script>
+                <script>
+                    $(".button-collapse").sideNav();
+                </script>
             </div>
             <div class="col s12 m4 l2"></div>
         </div>
